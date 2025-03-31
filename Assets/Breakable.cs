@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 
 public class Breakable : MonoBehaviour
 {
+    public Action OnDestroy;
     [SerializeField] private Color[] lifeColors;
     private int currentLives;
 
@@ -23,6 +25,7 @@ public class Breakable : MonoBehaviour
     {
         if (--currentLives <= 0)
         {
+            OnDestroy?.Invoke();
             Destroy(gameObject);
         }
         else
