@@ -8,12 +8,14 @@ public class ExplodeOnDeath : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private Light2D glowLight;
+    private AudioSource audioSource;
     [SerializeField] private GameObject engineGO;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         glowLight = GetComponent<Light2D>();
+        audioSource = GetComponent<AudioSource>();
     }
     private void OnEnable()
     {
@@ -28,11 +30,14 @@ public class ExplodeOnDeath : MonoBehaviour
     }
 
     private void ToggleOff() => Toggle(false);
-    private void Toggle(bool enabled)
+    private void Toggle(bool enableShip)
     {
-        spriteRenderer.enabled = enabled;
-        glowLight.enabled = enabled;
-        engineGO.SetActive(enabled);
-        ExplosionVFX.SetActive(!enabled);
+        spriteRenderer.enabled = enableShip;
+        glowLight.enabled = enableShip;
+        engineGO.SetActive(enableShip);
+        ExplosionVFX.SetActive(!enableShip);
+
+        if (!enableShip)
+            audioSource.Play();
     }
 }

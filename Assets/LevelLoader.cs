@@ -1,21 +1,41 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class LevelLoader : MonoBehaviour
 {
+    [SerializeField] private Image fadeSprite;
     private void OnEnable()
     {
-        StarControllerManager.OnAllStarsSaved +=LoadNextLevel;
+        StarControllerManager.OnConstellationFinished += LoadNextLevel;
+        BallController.OnDied += WaitForReload;
     }
 
     private void OnDisable()
     {
-        StarControllerManager.OnAllStarsSaved -= LoadNextLevel;
+        StarControllerManager.OnConstellationFinished -= LoadNextLevel;
+        BallController.OnDied -= WaitForReload;
+    }
+
+    private void Start()
+    {
+        StartCoroutine(FadeLevel(true, 2f, 0));   
+    }
+
+    private void WaitForReload()
+    {
+        Invoke(nameof(ReloadLevel), 3f);
     }
 
     private void ReloadLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        StartCoroutine(FadeLevel(false, 2f, SceneManager.GetActiveScene().buildIndex));
+    }
+
+    private void RestartGame()
+    {
+        StartCoroutine(FadeLevel(false, 2f, 0));
     }
 
     private void LoadNextLevel()
@@ -23,6 +43,32 @@ public class LevelLoader : MonoBehaviour
         int nextLevel = SceneManager.GetActiveScene().buildIndex + 1;
 
         if (nextLevel < SceneManager.sceneCount)
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        {
+            StartCoroutine(FadeLevel(false, 2f, nextLevel));
+        }
+        else
+        {
+            Invoke(nameof(RestartGame), 5f);
+        }
+    }
+
+    private IEnumerator FadeLevel(bool fadeIn, float fadeTime, int buildIndex)
+    {
+        float curTime = 0;
+        fadeSprite.gameObject.SetActive(true);
+        Color spriteColor = fadeSprite.color;
+        
+        while (curTime < fadeTime)
+        {
+            curTime += Time.deltaTime;
+            float delta = fadeIn ? 1 - curTime/fadeTime : curTime/fadeTime;
+            fadeSprite.color = new Color(spriteColor.r, spriteColor.g, spriteColor.b, delta);
+            yield return null;
+        }
+
+        if (!fadeIn)
+            SceneManager.LoadScene(buildIndex);
+
+        fadeSprite.gameObject.SetActive(false);
     }
 }
