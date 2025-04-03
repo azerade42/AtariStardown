@@ -37,4 +37,21 @@ public class MusicController : MonoBehaviour
             yield return null;
         }
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (Time.timeScale == 0)
+            {
+                audioSource.Play();
+                Time.timeScale = 1;
+            }
+            else
+            {
+                audioSource.Pause();
+                Time.timeScale = 0;
+            }
+        }
+    }
 }
