@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class StarControllerManager : MonoBehaviour
@@ -21,6 +22,15 @@ public class StarControllerManager : MonoBehaviour
         if (--numStarsRemaining == 0)
         {
             OnAllStarsSaved?.Invoke();
+
+            foreach (StarController star in stars)
+            {
+                if (star.GetComponent<LineRenderer>())
+                {
+                    star.GetComponent<LineRenderer>().enabled = true;
+                    star.FadeInLine(2f);
+                }
+            }
         }
     }
 }

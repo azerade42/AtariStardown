@@ -4,16 +4,38 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private PlayerPath path;
+    [SerializeField] private bool usePathY;
 
     private Camera mainCam;
 
-    [SerializeField] private bool usePathY;
+    private bool movementEnabled = true;
 
     private void Start()
     {
         mainCam = Camera.main;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Confined;
     }
+
+    private void OnEnable()
+    {
+        BallController.OnDeathToggled += ToggleMovement;
+    }
+
+    private void OnDisable()
+    {
+        BallController.OnDeathToggled -= ToggleMovement;
+    }
+
     private void FixedUpdate()
+    {
+        if (!movementEnabled)
+            return;
+        
+        MovePlayer();
+    }
+
+    private void MovePlayer()
     {
         Vector2 mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
 
@@ -37,4 +59,6 @@ public class PlayerMovement : MonoBehaviour
         Vector2 lerpedPos = Vector2.Lerp(path.pos1, path.pos2, t);
         transform.position = lerpedPos;
     }
+
+    private void ToggleMovement(bool enabled) => movementEnabled = enabled;
 }

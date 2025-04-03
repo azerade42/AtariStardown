@@ -5,29 +5,55 @@ using UnityEngine.Rendering.Universal;
 public class BallController : MonoBehaviour
 {
     public static Action OnDied;
+    public static Action<bool> OnDeathToggled;
+    
     [SerializeField] private float startBallSpeed = 10f;
-    private Rigidbody2D rb;
-    private Light2D glowLight;
     [SerializeField] Transform player;
     [SerializeField] private int startLives;
-    [SerializeField] private EndGameCanvas endGameCanvas;
+    [SerializeField] private GameObject explosion;
+
+    private Rigidbody2D rb;
+    private Light2D glowLight;
+    private SpriteRenderer spriteRenderer;
     private int lives;
+
+    private void OnEnable()
+    {
+        StarControllerManager.OnAllStarsSaved += Explode;
+    }
+
+    private void OnDisable()
+    {
+        StarControllerManager.OnAllStarsSaved -= Explode;
+    }
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         glowLight = GetComponent<Light2D>();
-        lives = startLives;
-        transform.position = player.transform.localPosition + player.transform.up;
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
+        lives = startLives;
+
+        transform.position = player.transform.localPosition + player.transform.up;
+        transform.parent = player;
         Invoke(nameof(StartMoving), 1f);
     }
 
     private void StartMoving()
     {
-        GetComponent<SpriteRenderer>().enabled = true;
+        transform.position = player.transform.localPosition + player.transform.up;
+        transform.parent = player;
+        spriteRenderer.enabled = true;
         glowLight.enabled = true;
+        OnDeathToggled?.Invoke(true);
 
+        Invoke(nameof(LaunchBall), 1f);
+    }
+
+    private void LaunchBall()
+    {
+        transform.parent = null;
         Vector2 forceDir = Vector2.right + Vector2.up;
         rb.AddForce(forceDir * startBallSpeed, ForceMode2D.Impulse);
     }
@@ -47,16 +73,27 @@ public class BallController : MonoBehaviour
         if (lives > 0)
         {
             rb.linearVelocity = Vector2.zero;
-            transform.position = player.transform.localPosition + player.transform.up;
-            GetComponent<SpriteRenderer>().enabled = false;
+            spriteRenderer.enabled = false;
             glowLight.enabled = false;
+            OnDeathToggled?.Invoke(false);
             
             Invoke(nameof(StartMoving), 3f);
         }
         else
         {
+            OnDeathToggled?.Invoke(false);
             OnDied?.Invoke();
             gameObject.SetActive(false);
         }
+    }
+
+    private void Explode()
+    {
+        GetComponent<Collider2D>().enabled = false;
+        rb.linearVelocity = Vector2.zero;
+
+        explosion.SetActive(true);
+        glowLight.enabled = false;
+        spriteRenderer.enabled = false;
     }
 }

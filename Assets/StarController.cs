@@ -53,6 +53,28 @@ public class StarController : MonoBehaviour
         StartCoroutine(SpinAndGrowGradually(1f));
     }
 
+    public IEnumerator FadeInLine(float endTime)
+    {
+        LineRenderer line = GetComponent<LineRenderer>();
+        float curTime = 0;
+        line.colorGradient = new Gradient();
+        int alphaKeysLen = line.colorGradient.alphaKeys.Length;
+
+        for (int i = 0; i < alphaKeysLen; i++)
+        {
+            line.colorGradient.alphaKeys[i].alpha = 0;
+        }
+        
+        while (curTime < endTime)
+        {
+            for (int i = 0; i < alphaKeysLen; i++)
+            {
+                line.colorGradient.alphaKeys[i].alpha = Mathf.Lerp(0, 1, curTime/endTime);
+            }
+            yield return null;
+        }
+    }
+
     private IEnumerator SpinAndGrowGradually(float endTime)
     {
         float curTime = 0;
