@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SpinController : MonoBehaviour
 {
-    [SerializeField] private float spinSpeed = 0.5f;
+    public float SpinSpeed = 0.5f;
 
     private int spinRotation;
 
@@ -12,7 +12,7 @@ public class SpinController : MonoBehaviour
     }
     void Update()
     {
-        float rotationThisFrame = spinRotation * spinSpeed * Time.deltaTime;
+        float rotationThisFrame = spinRotation * SpinSpeed * Time.deltaTime;
         transform.rotation *= Quaternion.Euler(0, 0, rotationThisFrame);
     }
 }
