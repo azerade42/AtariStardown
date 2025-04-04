@@ -58,13 +58,13 @@ public class StarControllerManager : MonoBehaviour
 
         yield return new WaitForSeconds(3f);
         
-        constellation.gameObject.SetActive(true);
+        constellationBG.gameObject.SetActive(true);
 
         while (curTime < fadeTime)
         {
             curTime += Time.deltaTime;
             constellation.color = new Color(1, 1, 1, maxAlpha * curTime/fadeTime);
-            constellationBG.color = bgColor * new Color(1, 1, 1, maxAlphaBG * curTime/fadeTime);
+            constellationBG.color = new Color(bgColor.r, bgColor.g, bgColor.b, maxAlphaBG * curTime/fadeTime);
             yield return null;
         }
 

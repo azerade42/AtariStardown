@@ -63,13 +63,13 @@ public class LevelLoader : MonoBehaviour
         {
             curTime += Time.deltaTime;
             float delta = fadeIn ? 1 - curTime/fadeTime : curTime/fadeTime;
-            fadeSprite.color = spriteColor * new Color(1, 1, 1, delta);
+            fadeSprite.color =  new Color(spriteColor.r, spriteColor.g, spriteColor.b, delta);
             yield return null;
         }
 
         if (!fadeIn)
             SceneManager.LoadScene(buildIndex);
-        else
-            fadeSprite.gameObject.SetActive(false);
+        
+        fadeSprite.gameObject.SetActive(false);
     }
 }
