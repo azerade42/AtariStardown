@@ -47,16 +47,24 @@ public class StarControllerManager : MonoBehaviour
     private IEnumerator FadeInConstellationImage(float fadeTime)
     {
         float curTime = 0;
-        constellation.gameObject.SetActive(true);
         float maxAlpha = constellation.color.a;
         constellation.color = new Color(1, 1, 1, 0);
+        
+        constellation.gameObject.SetActive(true);
+        SpriteRenderer constellationBG = constellation.transform.GetChild(0).GetComponent<SpriteRenderer>();
+        Color bgColor = constellationBG.color;
+        float maxAlphaBG = 0.98f;
+        constellationBG.gameObject.SetActive(false);
 
         yield return new WaitForSeconds(3f);
+        
+        constellation.gameObject.SetActive(true);
 
         while (curTime < fadeTime)
         {
             curTime += Time.deltaTime;
-            constellation.color = new Color(1, 1, 1, curTime/fadeTime * maxAlpha);
+            constellation.color = new Color(1, 1, 1, maxAlpha * curTime/fadeTime);
+            constellationBG.color = bgColor * new Color(1, 1, 1, maxAlphaBG * curTime/fadeTime);
             yield return null;
         }
 
