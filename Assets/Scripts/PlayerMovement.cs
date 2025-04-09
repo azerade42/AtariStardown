@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -20,11 +21,15 @@ public class PlayerMovement : MonoBehaviour
     private void OnEnable()
     {
         BallController.OnDeathToggled += ToggleMovement;
+        EndGameCanvasController.OnScreenEnabled += UnlockCursor;
+        StarControllerManager.OnConstellationFinished += ToggleOffMovement;
     }
 
     private void OnDisable()
     {
         BallController.OnDeathToggled -= ToggleMovement;
+        EndGameCanvasController.OnScreenEnabled -= UnlockCursor;
+        StarControllerManager.OnConstellationFinished -= ToggleOffMovement;
     }
 
     private void FixedUpdate()
@@ -60,5 +65,13 @@ public class PlayerMovement : MonoBehaviour
         transform.position = lerpedPos;
     }
 
+    private void ToggleOffMovement() => movementEnabled = false;
+
     private void ToggleMovement(bool enabled) => movementEnabled = enabled;
+
+    private void UnlockCursor()
+    {        
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
 }

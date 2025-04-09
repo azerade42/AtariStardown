@@ -10,13 +10,13 @@ public class LevelLoader : MonoBehaviour
     private void OnEnable()
     {
         StarControllerManager.OnConstellationFinished += LoadNextLevel;
-        BallController.OnDied += WaitForReload;
+        EndGameCanvasController.OnRestartPressed += RestartGame;
     }
 
     private void OnDisable()
     {
         StarControllerManager.OnConstellationFinished -= LoadNextLevel;
-        BallController.OnDied -= WaitForReload;
+        EndGameCanvasController.OnRestartPressed -= RestartGame;
     }
 
     private void Start()
@@ -24,19 +24,9 @@ public class LevelLoader : MonoBehaviour
         StartCoroutine(FadeLevel(true, 2f, 0));   
     }
 
-    private void WaitForReload()
+    public void RestartGame(int index)
     {
-        Invoke(nameof(ReloadLevel), 3f);
-    }
-
-    private void ReloadLevel()
-    {
-        StartCoroutine(FadeLevel(false, 2f, SceneManager.GetActiveScene().buildIndex));
-    }
-
-    private void RestartGame()
-    {
-        StartCoroutine(FadeLevel(false, 2f, 0));
+        StartCoroutine(FadeLevel(false, 2f, index));
     }
 
     private void LoadNextLevel()
@@ -46,10 +36,6 @@ public class LevelLoader : MonoBehaviour
         if (nextLevel < 3)
         {
             StartCoroutine(FadeLevel(false, 2f, nextLevel));
-        }
-        else
-        {
-            Invoke(nameof(RestartGame), 5f);
         }
     }
 
