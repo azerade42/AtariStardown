@@ -8,11 +8,13 @@ public class StarControllerManager : MonoBehaviour
     public static Action OnConstellationFinished;
     int numStarsRemaining;
     StarController[] stars;
-    private AudioSource audioSource;
+    //private AudioSource audioSource;
+    [SerializeField] AudioClip winSFX;
+    public static event Action<AudioClip> OnWin;
     [SerializeField] private SpriteRenderer constellation;
     private void Start()
     {
-        audioSource = GetComponent<AudioSource>();
+        //audioSource = GetComponent<AudioSource>();
         stars = transform.GetComponentsInChildren<StarController>();
         numStarsRemaining = stars.Length;
         foreach (StarController star in stars)
@@ -25,7 +27,8 @@ public class StarControllerManager : MonoBehaviour
     {
         if (--numStarsRemaining == 0)
         {
-            audioSource.Play();
+            //audioSource.Play();
+            OnWin(winSFX);
             OnAllStarsSaved?.Invoke();
             StartConstellationSequence();
         }
