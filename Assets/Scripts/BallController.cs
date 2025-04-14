@@ -20,11 +20,15 @@ public class BallController : MonoBehaviour
     private void OnEnable()
     {
         StarControllerManager.OnAllStarsSaved += Explode;
+        GameManager.OnLifeLost += LifeLost;
+        GameManager.OnGameOver += GameOver;
     }
 
     private void OnDisable()
     {
         StarControllerManager.OnAllStarsSaved -= Explode;
+        GameManager.OnLifeLost -= LifeLost;
+        GameManager.OnGameOver -= GameOver;
     }
 
     private void Start()
@@ -67,7 +71,7 @@ public class BallController : MonoBehaviour
         }
     }
 
-    public void Damage(int damage)
+    /*public void Damage(int damage)
     {
         lives -= damage;
         if (lives > 0)
@@ -85,6 +89,23 @@ public class BallController : MonoBehaviour
             OnDied?.Invoke();
             gameObject.SetActive(false);
         }
+    }*/
+
+    private void LifeLost()
+    {
+        rb.linearVelocity = Vector2.zero;
+        spriteRenderer.enabled = false;
+        glowLight.enabled = false;
+        OnDeathToggled?.Invoke(false);
+        
+        Invoke(nameof(StartMoving), 3f);
+    }
+
+    private void GameOver()
+    {
+        OnDeathToggled?.Invoke(false);
+        OnDied?.Invoke();
+        gameObject.SetActive(false);
     }
 
     private void Explode()

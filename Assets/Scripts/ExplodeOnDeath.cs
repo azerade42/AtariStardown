@@ -5,17 +5,19 @@ using UnityEngine.Rendering.Universal;
 public class ExplodeOnDeath : MonoBehaviour
 {
     [SerializeField] GameObject ExplosionVFX;
+    [SerializeField] AudioClip ExplosionSFX;
 
     private SpriteRenderer spriteRenderer;
     private Light2D glowLight;
-    private AudioSource audioSource;
+    //private AudioSource audioSource;
+    public static event Action<AudioClip> OnExplode;
     [SerializeField] private GameObject engineGO;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         glowLight = GetComponent<Light2D>();
-        audioSource = GetComponent<AudioSource>();
+        //audioSource = GetComponent<AudioSource>();
     }
     private void OnEnable()
     {
@@ -38,6 +40,7 @@ public class ExplodeOnDeath : MonoBehaviour
         ExplosionVFX.SetActive(!enableShip);
 
         if (!enableShip)
-            audioSource.Play();
+            //audioSource.Play();
+            OnExplode(ExplosionSFX);
     }
 }
