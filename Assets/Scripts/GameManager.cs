@@ -1,11 +1,13 @@
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject audioManagerObject;
     [SerializeField] int startLives = 3;
+    [SerializeField] Image[] livesIcons;
     public static event Action OnLifeLost;
     public static event Action OnGameOver;
     private int lives;
@@ -34,6 +36,7 @@ public class GameManager : MonoBehaviour
     private void Damage(int livesLost)
     {
         lives -= livesLost;
+        UpdateLivesUI(lives);
         if (lives > 0)
         {
             OnLifeLost();
@@ -42,6 +45,11 @@ public class GameManager : MonoBehaviour
         {
             OnGameOver();
         }
+    }
+
+    private void UpdateLivesUI(int livesCount)
+    {
+        livesIcons[livesCount].enabled = false;
     }
 
     private void Update()
